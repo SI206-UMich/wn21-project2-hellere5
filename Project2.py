@@ -5,6 +5,8 @@ import os
 import csv
 import unittest
 
+#I worked with Luke Polyak
+
 
 def get_titles_from_search_results(filename):
     """
@@ -136,8 +138,11 @@ def write_csv(data, filename):
 
     This function should not return anything.
     """
-    pass
-
+    with open(filename, mode = 'w') as file_:
+        write_file = csv.writer(file_)
+        write_file.writerow(['Book Title', 'Author Name'])
+        for x in data:
+            write_file.writerow(x)
 
 def extra_credit(filepath):
     """
@@ -146,7 +151,17 @@ def extra_credit(filepath):
     Please see the instructions document for more information on how to complete this function.
     You do not have to write test cases for this function.
     """
-    pass
+    file_ = open(filepath, 'r')
+    read_file = file_.read()
+    file_.close()
+    lst = []
+    soup = BeautifulSoup(read_file, 'lxml')
+    anchor = soup.find('div', class_ = 'readable stacked').find('span', id = 'freeText4791443123668479528').text
+    reg_exp = re.findall(r'[A-Z]{1}\w+ [A-Z]\w+', anchor)
+    for x in reg_exp:
+        lst.append(x[0])
+    return lst
+ 
 
 class TestCases(unittest.TestCase):
 
@@ -237,20 +252,23 @@ class TestCases(unittest.TestCase):
 
     def test_write_csv(self):
         # call get_titles_from_search_results on search_results.htm and save the result to a variable
-
+        variable = get_titles_from_search_results('search_results.htm')
         # call write csv on the variable you saved and 'test.csv'
-
+        write_csv(variable, 'test.csv')
         # read in the csv that you wrote (create a variable csv_lines - a list containing all the lines in the csv you just wrote to above)
-
+        with open('test.csv', newline = '') as file_:
+            file_reader = csv.reader(file_)
+            csv_lines = list(file_reader)
 
         # check that there are 21 lines in the csv
-
+        self.assertEqual(len(csv_lines), 21)
         # check that the header row is correct
+        self.assertTrue(csv_lines[0] == ['Book Title','Author Name'])
 
         # check that the next row is 'Harry Potter and the Deathly Hallows (Harry Potter, #7)', 'J.K. Rowling'
-
+        self.assertTrue(csv_lines[1] == (['Harry Potter and the Deathly Hallows (Harry Potter, #7)', 'J.K. Rowling']))
         # check that the last row is 'Harry Potter: The Prequel (Harry Potter, #0.5)', 'J.K. Rowling'
-        pass
+        self.assertTrue(csv_lines[-1] == (['Harry Potter: The Prequel (Harry Potter, #0.5)', 'J.K. Rowling']))
 
 
 if __name__ == '__main__':
