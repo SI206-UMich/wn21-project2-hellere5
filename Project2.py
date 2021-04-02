@@ -157,9 +157,9 @@ def extra_credit(filepath):
     lst = []
     soup = BeautifulSoup(read_file, 'lxml')
     anchor = soup.find('div', class_ = 'readable stacked').find('span', id = 'freeText4791443123668479528').text
-    reg_exp = re.findall(r'[A-Z]{1}\w+ [A-Z]\w+', anchor)
+    reg_exp = re.findall(r'\b(?:[A-Z]\w{2,}) (?:[A-Z]\w+)(?: (?:[A-Z]\w*))*', anchor)
     for x in reg_exp:
-        lst.append(x[0])
+        lst.append(x)
     return lst
  
 
